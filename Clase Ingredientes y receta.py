@@ -41,14 +41,65 @@ class Papa(Ingredientes):
         super().__init__(nombre, "crudo")
 
     def preparar(self):
-        """Se usa en la Freidora: crudo -> frito."""
+        """Se usa en la Freidora: crudo pasa a frito."""
         if self.estado == "crudo":
             self.estado = "frito"
 
 
 
 class Receta:
+    def __init__(self, nombre, lista_ingredientes):
+        self.nombre = nombre
+        self.lista_ingredientes  = lista_ingredientes
+        self.puntaje = 10 * len(lista_ingredientes)
+        self.puntaje_original = self.puntaje
+        self.tiempo = 15 * len(lista_ingredientes)
+        self.tiempo_restante = self.tiempo
     
+    def compararReceta(self, ingredientes_entregados):
+        if len(ingredientes_entregados) != len(self.lista_ingredientes):
+            return False
+        pendientes = list(self.lista_ingredientes)
+        
+        for entregado in ingredientes_entregados:
+            entregado = None
+            for requerido in pendientes:
+                if (
+                    type(entregado) == type(requerido)
+                    and entregado.nombre == requerido.nombre
+                    and entregado.estado == requerido.estado
+                ):
+                    encontrado = requerido
+                    break
+                if encontrado is None:
+                    return False
+                pendientes.remove(encontrado)
+        return True
+
+    def actualizarTiempo(self, delta_tiempo):
+
+        '''
+         Disminuye el tiempo restante. Si llega a 0, reduce el puntaje
+        a la mitad y reinicia el contador. Retorna True si la receta
+        debe eliminarse (puntaje llegó a 0).
+        '''
+        self.tiempo_restante -= delta_tiempo
+        if self.tiempo_restante  <= 0:
+            self.reducir_puntaje()
+            self.tiempo_restante = self.tiempo
+
+            if self.puntaje == 0:
+                return True
+            
+        return False
+    def reducir_puntaje(self):
+        self.puntaje = self.puntaje // 2
+    
+    def __repr__(self):
+        return f"Receta({self.nombre}, puntaje = {self.puntaje}, tiempo restante ={self.tiempo_restante})"
+
+
+
     
 
 

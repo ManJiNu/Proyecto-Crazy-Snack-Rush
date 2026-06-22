@@ -62,7 +62,7 @@ class Receta:
         pendientes = list(self.lista_ingredientes)
         
         for entregado in ingredientes_entregados:
-            entregado = None
+            encontrado = None #Se le hizo un cambio para comparar los ingredientes realmente
             for requerido in pendientes:
                 if (
                     type(entregado) == type(requerido)
@@ -71,9 +71,9 @@ class Receta:
                 ):
                     encontrado = requerido
                     break
-                if encontrado is None:
-                    return False
-                pendientes.remove(encontrado)
+            if encontrado is None:
+                return False
+            pendientes.remove(encontrado)
         return True
 
     def actualizarTiempo(self, delta_tiempo):
@@ -88,7 +88,7 @@ class Receta:
             self.reducir_puntaje()
             self.tiempo_restante = self.tiempo
 
-            if self.puntaje == 0:
+            if self.puntaje <= 0:
                 return True
             
         return False

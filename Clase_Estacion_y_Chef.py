@@ -16,10 +16,12 @@ class Estacion:
         self.ingrediente_encima = None
         # Lista de ingredientes que acepta la estación
         self.ingredientes_aceptados = []
-    def generar_receta(self):
+    def generarReceta(self):
         # Método base, cada subclase lo sobreescribe
         pass
 
+    def procesarIngredientes(self, ingrediente): #Aqui hago un metodo para procesar y modificar los igredientes 
+        pass
 # Subclase que provee ingredientes ilimitados de un tipo específico
 class Despensa(Estacion):
     def __init__(self, posicion_x, posicion_y, ingrediente_tipo):
@@ -33,11 +35,17 @@ class TablaDePicar(Estacion):
         super().__init__("Tabla de Picar", posicion_x, posicion_y)
         # Tiempo en segundos para procesar el ingrediente
         self.tiempo = 2
-    def generar_receta(self):
+    def generarReceta(self):
         # Genera una receta predefinida con vegetales para la tabla de picar
         tomate = FrutasyVegetales("Tomate", "picado")
         lechuga = FrutasyVegetales("Lechuga", "picado")
         return Receta("Ensalada", [tomate, lechuga])
+    def procesarIngredientes(self, ingrediente): #Basicamente lo que hice aqui fue cambiar a que el ingrediente fue picado
+        ingrediente.preparar()
+        print (
+            f"{ingrediente.nombre} fue picado" #Me indica al usuario que fue picado
+        )
+        return ingrediente 
 
 # Subclase para cocinar proteínas
 class Sarten(Estacion):
@@ -45,11 +53,19 @@ class Sarten(Estacion):
         super().__init__("Sarten", posicion_x, posicion_y)
         # Tiempo en segundos para procesar el ingrediente
         self.tiempo = 4
-    def generar_receta(self):
+    def generarReceta(self):
         # Genera una receta predefinida con proteína para el sartén
         carne = Proteina("Carne", "cocinado")
         pan = Panes("Pan")
         return Receta("Hamburguesa", [carne, pan])
+    
+    def procesarIngredientes(self, ingrediente):
+        ingrediente.preparar()
+
+        print(f"{ingrediente.nombre} fue cocinado")
+
+        return ingrediente
+        
 
 # Subclase para freír papas
 class Freidora(Estacion):
@@ -57,16 +73,24 @@ class Freidora(Estacion):
         super().__init__("Freidora", posicion_x, posicion_y)
         # Tiempo en segundos para procesar el ingrediente
         self.tiempo = 5
-    def generar_receta(self):
+    def generarReceta(self):
         # Genera una receta predefinida con papas fritas
         papa = Papa()
         papa.estado = "frito"
         return Receta("Papas Fritas", [papa])
+    def procesarIngredientes(self, ingrediente):
+        ingrediente.preparar()
+        print(
+            f"{ingrediente.nombre} fue frito" #Me indica que modifique tal comida al freir
+        )
+        return ingrediente
 
 # Subclase donde se entregan las recetas completadas
 class Entrega(Estacion):
     def __init__(self, posicion_x, posicion_y):
         super().__init__("Entrega", posicion_x, posicion_y)
+
+
 
 
 
@@ -107,10 +131,10 @@ class Chef:
         # Suelta el ingrediente que el chef tiene en mano
         self.ingrediente_a_mano = None
     
-tabla = TablaDePicar(100, 200)
-print(tabla.nombre)
-print(tabla.generar_receta())
+#tabla = TablaDePicar(100, 200)
+#print(tabla.nombre)
+#print(tabla.generarReceta())
 
-chef = Chef("Manfred", 100, 200, velocidad=5)
-print(chef.nombre)
-print(chef.puntos)
+#chef = Chef("Manfred", 100, 200, velocidad=5)
+#print(chef.nombre)
+#print(chef.puntos)

@@ -19,9 +19,9 @@ clock = pygame.time.Clock() # Controla los FPS del juego
 # 
 #  para los textos en pantalla
 fuente = pygame.font.SysFont("Arial", 40, bold=True)
-fuente_titulo = pygame.font.SysFont("Arial", 60, bold=True)
-fuente_pequeña = pygame.font.SysFont("Arial", 20) # Para recetas
-fuente_pequeña2 = pygame.font.SysFont("Arial", 25) # Para ingrediente en mano
+fuente_titulo = pygame.font.SysFont("Allegro", 60, bold=True)
+fuente_pequeña = pygame.font.SysFont("Allegro", 20) # Para recetas
+fuente_pequeña2 = pygame.font.SysFont("Allegro", 25) # Para ingrediente en mano
 
 # Botones del menú principal
 btn_jugar = boton(300, 250, 200, 50, "Jugar", fuente)

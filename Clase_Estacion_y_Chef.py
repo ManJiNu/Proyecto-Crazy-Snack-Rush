@@ -65,7 +65,12 @@ class Sarten(Estacion):
         print(f"{ingrediente.nombre} fue cocinado")
 
         return ingrediente
-        
+class MesaNormal:
+    def __init__(self, posicion_x, posicion_y): #Para poner la comida en el plato
+        self.nombre = "Mesa"
+        self.posicion_x = posicion_x
+        self.posicion_y = posicion_y
+        self.objeto_encima = None        
 
 # Subclase para freír papas
 class Freidora(Estacion):

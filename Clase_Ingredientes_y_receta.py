@@ -45,7 +45,18 @@ class Papa(Ingredientes):
         if self.estado == "crudo":
             self.estado = "frito"
 
-
+class Plato:
+    def __init__(self):
+        self.ingredientes_adentro=[] #Lista para ir acumulando ingredientes
+        self.esta_sucio = False #Para lavar platos si me diera tiempo de hacerlo
+    def agregar_ingrediente(self, ingrediente):
+        if ingrediente.estado in ["picado", "cocinado", "preparado", "frito"]:
+            self.ingredientes_adentro.append(ingrediente)
+            print (f"Se agregó {ingrediente.nombre} al plato. Contenido actual: {self.ingredientes_adentro}")
+            return True
+        else:
+            print(f"¡No puedes poner {ingrediente.nombre} crudo en el plato!")
+            return False 
 
 class Receta:
     def __init__(self, nombre, lista_ingredientes):

@@ -1,3 +1,4 @@
+
 import pygame
 
 FONDO =(15,20,40)
@@ -26,8 +27,8 @@ class boton:
         pygame.draw.rect(superficie, color_fondo, self.rect, width=2, border_radius=10)
 
         text_surf = self.fuente.render(self.texto, True, color_texto)
-        texto_rect = texto_surf.get_rect(center=self.rect.center)
-        superficie.blit(texto_surf, texto_rect)
+        texto_rect = text_surf.get_rect(center=self.rect.center)
+        superficie.blit(text_surf, texto_rect)
  
     def actualizar_hover(self, pos_mouse):
         self.hover = self.rect.collidepoint(pos_mouse)
@@ -37,4 +38,3 @@ class boton:
             evento.type == pygame.MOUSEBUTTONDOWN
             and evento.button == 1
             and self.rect.collidepoint(evento.pos))
-

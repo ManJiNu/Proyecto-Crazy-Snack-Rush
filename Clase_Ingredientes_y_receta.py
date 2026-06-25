@@ -64,7 +64,7 @@ class Receta:
         self.lista_ingredientes  = lista_ingredientes
         self.puntaje = 10 * len(lista_ingredientes)
         self.puntaje_original = self.puntaje
-        self.tiempo = 15 * len(lista_ingredientes)
+        self.tiempo = 60 * len(lista_ingredientes)
         self.tiempo_restante = self.tiempo
     
     def compararReceta(self, ingredientes_entregados):

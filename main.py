@@ -11,13 +11,14 @@ import os #Tuve que meter esta porque no queria encontrar las imagenes
 
 
 #####################CREACION DE LA COCINA#################
+#Se crea la cocina con 180 segundos de tiempo de juego
 cocina = Cocina(180)
 #####################CREACION DE CHEFS#####################
 chef1 = Chef(
     nombre = "Chef 1",
     posicion_x=200,
     posicion_y=300,
-    velocidad=5
+    velocidad=5 #Pixeles que se mueve por frame
 )
 
 chef2 = Chef(
@@ -85,7 +86,7 @@ print("\nORDENES ACTIVAS:")#Para ver las ordenes que se estan ejecutando
 for receta in cocina.ordenes:
     print(receta)
 
-print("n\PROBANDO ESTACIONES") #En esta seccion pruebo si sirve el procesamiento de ingredientes
+print("\nPROBANDO ESTACIONES") #En esta seccion pruebo si sirve el procesamiento de ingredientes
 ##Pruebo si el tomate se pica##
 tomate = FrutasyVegetales("Tomate")
 print(
@@ -149,9 +150,13 @@ btn_es3 = pygame.Rect(520, 250, 180, 120)
 chef1.posicion_x, chef1.posicion_y = 200,300
 chef2.posicion_x, chef2.posicion_y = 400, 300
 #Configuro estado de inicio de la partida
+chef1.puntos = 0  #Reseteo puntos despues de las pruebas de consola para que no afecten el juego real
+chef2.puntos = 0
 pantalla_actual = "menu"
+escenario_actual = "fast_food"
 chef_activo = chef1
 tiempo_ultima_receta = pygame.time.get_ticks()
+ingredientes_plato = []  #Lista acumuladora para juntar ingredientes antes de entregar
 
 #Genero una nueva orden si no hay nada
 if len(cocina.ordenes) == 0:
@@ -162,10 +167,13 @@ ruta_imagen = os.path.join(ruta_carpeta, "Opening.jpg")
 imagen_fondo = pygame.image.load(ruta_imagen)
 imagen_fondo = pygame.transform.scale(imagen_fondo, (ANCHO, ALTO))
 imagen_cocina_raw = pygame.image.load("Game1.jpg").convert()
-imagen_cocina = pygame.transform.scale(imagen_cocina_raw, (800, 600))
+imagen_cocina = pygame.transform.scale(imagen_cocina_raw, (ANCHO, ALTO))
 ####imagenes implementos de cocina##########
 img_tabla = pygame.image.load("TablaPicar.png").convert_alpha()
 img_tabla = pygame.transform.scale(img_tabla, (110, 110))
+
+imagen_cocina_bbq_raw = pygame.image.load("game2.jpeg").convert()
+imagen_cocina_bbq = pygame.transform.scale(imagen_cocina_bbq_raw, (880, 600))
 
 img_sarten = pygame.image.load("Horno.png").convert_alpha()
 img_sarten = pygame.transform.scale(img_sarten, (110, 110))
@@ -193,10 +201,22 @@ img_crater_pan = pygame.transform.scale(img_crater_pan, (110, 110))
 
 img_crater_papa = pygame.image.load("Papas.png").convert_alpha()
 img_crater_papa = pygame.transform.scale(img_crater_papa, (110, 110))
+
+img_brisket = pygame.image.load("bristek.png").convert_alpha()
+img_brisket = pygame.transform.scale(img_brisket, (110, 110))
+
+img_costillas = pygame.image.load("costilla.png").convert_alpha()
+img_costillas = pygame.transform.scale(img_costillas, (110, 110))
+
+img_pan_brioche = pygame.image.load("panbrioche.png").convert_alpha()
+img_pan_brioche = pygame.transform.scale(img_pan_brioche, (110, 110))
+
+img_maiz = pygame.image.load("maiz.png").convert_alpha()
+img_maiz = pygame.transform.scale(img_maiz, (110, 110))
 #-------------CICLO PRINCIPAL DE INTERFAZ---------------------------------------------------------------------------------------------------------
 running = True
 while running: #DELTA TIME, obtengo el tiempo transcurrido
-    dt = clock.tick(30) / 1000.0
+    dt = clock.tick(30) / 1000.0  #dt = tiempo en segundos desde el ultimo frame. Limita a 30 FPS
     eventos = pygame.event.get() #####Obtencion de eventos. Esto es obligatorio en Pygame la verdad siempre esta segun lo que he visto####
     pos_mouse = pygame.mouse.get_pos()#Rastrea el puntero del mouse
     for event in eventos:
@@ -213,8 +233,34 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
         elif pantalla_actual == "seleccion_escenario":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if btn_es1.collidepoint(pos_mouse):
+                    escenario_actual = "fast_food"
+                    cocina.configurarEscenario("fast_food")
+                    cocina.estaciones.clear()
+                    cocina.agregarEstacion(TablaDePicar(100, 250))
+                    cocina.agregarEstacion(Sarten(100, 400))
+                    cocina.agregarEstacion(Freidora(640, 250))
+                    cocina.agregarEstacion(Entrega(640, 400))
+                    cocina.agregarEstacion(Despensa(150, 110, "Tomate"))
+                    cocina.agregarEstacion(Despensa(270, 110, "Carne"))
+                    cocina.agregarEstacion(Despensa(390, 110, "Pan"))
+                    cocina.agregarEstacion(Despensa(510, 110, "Papa"))
+                    cocina.agregarEstacion(MesaNormal(630, 110))
+                    cocina.generarReceta()
                     pantalla_actual = "juego"  
                 elif btn_es2.collidepoint(pos_mouse):
+                    escenario_actual = "texas_bbq"
+                    cocina.configurarEscenario("texas_bbq")
+                    cocina.estaciones.clear()
+                    cocina.agregarEstacion(TablaDePicar(100, 250))
+                    cocina.agregarEstacion(Sarten(100, 400))
+                    cocina.agregarEstacion(Freidora(640, 250))
+                    cocina.agregarEstacion(Entrega(640, 400))
+                    cocina.agregarEstacion(Despensa(150, 110, "Brisket"))
+                    cocina.agregarEstacion(Despensa(270, 110, "Costillas"))
+                    cocina.agregarEstacion(Despensa(390, 110, "Pan Brioche"))
+                    cocina.agregarEstacion(Despensa(510, 110, "Maiz"))
+                    cocina.agregarEstacion(MesaNormal(630, 110))
+                    cocina.generarReceta()
                     pantalla_actual = "juego"
                 elif btn_es3.collidepoint(pos_mouse):
                     pantalla_actual = "juego"
@@ -224,14 +270,14 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
             if event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_SPACE, pygame.K_e]:
                     rect_chef = pygame.Rect(chef_activo.posicion_x, chef_activo.posicion_y, 40, 40)
-                    rango_alcance = rect_chef.inflate(30, 30) # Caja de rango estirada
+                    rango_alcance = rect_chef.inflate(30, 30) # Caja de rango estirada para que no haya que estar exactamente encima
 
                     for est in cocina.estaciones: #A continuacion describo las acciones que pueden hacer los chefs. EXISTEN 3
                         rect_est = pygame.Rect(est.posicion_x, est.posicion_y, 110, 110)
 
                         if rango_alcance.colliderect(rect_est):
                             print("Colision con:", est.nombre)  
-                         #SI ES DESPENSA Y EL CHEF NO TIENE NADA EN LA MANO SACO ALGO NUEOV
+                         #SI ES DESPENSA Y EL CHEF NO TIENE NADA EN LA MANO SACO ALGO NUEVO
                             if isinstance(est, Despensa) and chef_activo.ingrediente_a_mano is None:
                                 if est.ingrediente_tipo == "Tomate":
                                     chef_activo.recoger_ingrediente(FrutasyVegetales("Tomate"))
@@ -241,42 +287,56 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
                                     chef_activo.recoger_ingrediente(Panes("Pan"))
                                 elif est.ingrediente_tipo == "Papa":
                                     chef_activo.recoger_ingrediente(Papa())
-                                break
+                                elif est.ingrediente_tipo == "Brisket":
+                                    chef_activo.recoger_ingrediente(Proteina("Brisket"))
+                                elif est.ingrediente_tipo == "Costillas":
+                                    chef_activo.recoger_ingrediente(Proteina("Costillas"))
+                                elif est.ingrediente_tipo == "Pan Brioche":
+                                    chef_activo.recoger_ingrediente(Panes("Pan Brioche"))
+                                elif est.ingrediente_tipo == "Maiz":
+                                    chef_activo.recoger_ingrediente(FrutasyVegetales("Maiz"))
+                                break #Salgo del loop para no revisar mas estaciones
 
                              #SI ES ALGO POR TRANSFORMAR MODIFICO SU ESTADO USANDO LOS METODOS QUE HICE. 
-                        elif chef_activo.ingrediente_a_mano is not None:
-                            item = chef_activo.ingrediente_a_mano
-                            print("ESTOY CERCA DE UNA ESTACION")
-                            print(type(est))
-                            print(type(item))
+                            elif chef_activo.ingrediente_a_mano is not None:
+                                item = chef_activo.ingrediente_a_mano
+                                print("ESTOY CERCA DE UNA ESTACION")
+                                print(type(est))
+                                print(type(item))
+                                
+                                if isinstance(est, TablaDePicar) and isinstance(item, FrutasyVegetales): #PROCESAR: solo pica si el item es vegetal o fruta
+                                    print("Uso la tabla")
+                                    est.procesarIngredientes(item)
+                                    break
+                                elif isinstance(est, Sarten) and isinstance(item, Proteina): #Solo cocina si el item es proteina
+                                    est.procesarIngredientes(item)
+                                    break
+                                elif isinstance(est, Freidora) and isinstance(item, Papa): #Solo frie si el item es papa
+                                    est.procesarIngredientes(item)
+                                    break
+                
+                                elif isinstance(est, Entrega): #ENTREGAR
+                                    #Agrego el ingrediente en mano a la lista acumuladora
+                                    ingredientes_plato.append(chef_activo.ingrediente_a_mano)
+                                    chef_activo.ingrediente_a_mano = None
+                                    #Intento entregar con todos los ingredientes acumulados
+                                    exito = cocina.entregarReceta(chef_activo, ingredientes_plato)
+                                    if exito:
+                                        ingredientes_plato = []  #Si salio bien limpio el plato
+                                    #Si no coincide, el plato sigue acumulando ingredientes
+                                    break
                             
-                            if isinstance(est, TablaDePicar) and isinstance(item, FrutasyVegetales): #PROCESAR
-                                print("Uso la tabla")
-                                est.procesarIngredientes(item)
-                                break
-                            elif isinstance(est, Sarten) and isinstance(item, Proteina):
-                                est.procesarIngredientes(item)
-                                break
-                            elif isinstance(est, Freidora) and isinstance(item, Papa):
-                                est.procesarIngredientes(item)
-                                break
-            
-                            elif isinstance(est, Entrega): #ENTREGAR
-                                comida = [chef_activo.ingrediente_a_mano]
-                                exito = cocina.deliverReceta(chef_activo, comida) 
-                                break
-                        
-                        if isinstance(est, MesaNormal):
-                            if chef_activo.ingrediente_a_mano is not None and est.objeto_encima is None:
-                                est.objeto_encima = chef_activo.ingrediente_a_mano
-                                chef_activo.ingrediente_a_mano = None
-                                print(f"Soltaste {est.objeto_encima.nombre} en la mesa")
-                                break
-                            elif chef_activo.ingrediente_a_mano is None and est.objeto_encima is not None:
-                                chef_activo.ingrediente_a_mano = est.objeto_encima
-                                est.objeto_encima = None
-                                print(f"Recogiste {chef_activo.ingrediente_a_mano.nombre} de la mesa")
-                                break
+                            if isinstance(est, MesaNormal):
+                                if chef_activo.ingrediente_a_mano is not None and est.objeto_encima is None:
+                                    est.objeto_encima = chef_activo.ingrediente_a_mano
+                                    chef_activo.ingrediente_a_mano = None
+                                    print(f"Soltaste {est.objeto_encima.nombre} en la mesa")
+                                    break
+                                elif chef_activo.ingrediente_a_mano is None and est.objeto_encima is not None:
+                                    chef_activo.ingrediente_a_mano = est.objeto_encima
+                                    est.objeto_encima = None
+                                    print(f"Recogiste {chef_activo.ingrediente_a_mano.nombre} de la mesa")
+                                    break
 
 
     if pantalla_actual == "menu":
@@ -330,16 +390,13 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
         ventana.blit(txt_es3, rect_txt3)
     #################### Fin###################################3
     elif pantalla_actual == "juego": 
-        for event in eventos:
-            chef_activo = controles(event, chef_activo, cocina.chefs) #Aqui empiezo a gestionar los controles del archivo de controles para la clase de chefs en la ocina
-
         cocina.tiempo -= dt #DELTA TIME. Controlo los tiempos
         if cocina.tiempo <=0:
             pantalla_actual = "game_over"
 
 #GENERADOR DE RECETAS CADA 15 MINUTOS##
-        ahora = pygame.time.get_ticks()
-        if ahora - tiempo_ultima_receta> 15000: 
+        ahora = pygame.time.get_ticks() #Tiempo actual en milisegundos
+        if ahora - tiempo_ultima_receta> 15000: #Si pasaron 15 segundos genero nueva receta 
             if len (cocina.ordenes)<3: #Ella me genera un maximo de 3 recetas por estos minutos 
                 cocina.generarReceta()
             tiempo_ultima_receta = ahora                       
@@ -349,13 +406,17 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
                 cocina.ordenes.remove(receta)
 
 #Aqui me di cuenta que se van de la pantalla asi que mejor puse esto para que respetaran los limites de la cuadricula
+        #Limites del mapa para que el chef no salga de la pantalla
         if chef_activo.posicion_x < 0: chef_activo.posicion_x = 0
         if chef_activo.posicion_x > ANCHO - 40: chef_activo.posicion_x = ANCHO - 40
         if chef_activo.posicion_y < 110: chef_activo.posicion_y = 110        
         if chef_activo.posicion_y > ALTO - 40: chef_activo.posicion_y = ALTO - 40                         
 
 #Fondito
-        ventana.blit(imagen_cocina, (0, 0))
+        if escenario_actual == "texas_bbq":
+            ventana.blit(imagen_cocina_bbq, (0, 0))
+        else:
+            ventana.blit(imagen_cocina, (0, 0))
         tiempo_texto = fuente.render(f"TIEMPO:{int(cocina.tiempo)}s", True,(0,0,0))
         ventana.blit(tiempo_texto,(20,20))       
         puntos_texto = fuente.render(f"Puntos C1: {chef1.puntos} | C2: {chef2.puntos}", True, (0, 0, 0))
@@ -370,10 +431,24 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
 
 #Mensaje arribita que me dice que ingrediente lleva el chef encima
         if chef_activo.ingrediente_a_mano:
-            ing_texto = fuente_pequeña2.render(
-                f"En mano:{chef_activo.ingrediente_a_mano.nombre} ({chef_activo.ingrediente_a_mano.estado})",
-                True,(50,50,50))
-            ventana.blit(ing_texto,(20,ALTO -40))
+            texto_mano = f"En mano: {chef_activo.ingrediente_a_mano.nombre} ({chef_activo.ingrediente_a_mano.estado})"
+
+            ing_texto = fuente_pequeña2.render(texto_mano, True, (255,255,255))
+            sombra_mano = fuente_pequeña2.render(texto_mano, True, (0,0,0))
+
+            x_mano = ANCHO - ing_texto.get_width() - 35
+            y_mano = 70
+
+            fondo_mano = pygame.Surface(
+                (ing_texto.get_width() + 20, ing_texto.get_height() + 12),
+                pygame.SRCALPHA
+            )
+
+            fondo_mano.fill((0, 0, 0, 180))
+
+            ventana.blit(fondo_mano, (x_mano - 10, y_mano - 5))
+            ventana.blit(sombra_mano, (x_mano + 1, y_mano + 2))
+            ventana.blit(ing_texto, (x_mano, y_mano))
 
 #IDENTIFICO LA ESTACION PARA ELEGIR LA IMAGEN YA CARGADA
         for est in cocina.estaciones:
@@ -398,6 +473,14 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
                     sprite_actual = img_crater_pan
                 elif est.ingrediente_tipo == "Papa":
                     sprite_actual = img_crater_papa
+                elif est.ingrediente_tipo == "Brisket":
+                    sprite_actual = img_brisket
+                elif est.ingrediente_tipo == "Costillas":
+                    sprite_actual = img_costillas
+                elif est.ingrediente_tipo == "Pan Brioche":
+                    sprite_actual = img_pan_brioche
+                elif est.ingrediente_tipo == "Maiz":
+                    sprite_actual = img_maiz
             
 
             if sprite_actual:
@@ -410,6 +493,7 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
             ventana.blit(nombre_letra, (est.posicion_x + 5, est.posicion_y - 18))
 
                 # Dibujo de los chefs (Naranja para el activo, Azul para el inactivo)
+                # El chef activo es el que responde a los controles WASD
         for chef in cocina.chefs:
             color_c = (255, 100, 0) if chef == chef_activo else (0, 100, 255)
             pygame.draw.rect(ventana, color_c, (chef.posicion_x, chef.posicion_y, 40, 40), border_radius=4)
@@ -423,4 +507,4 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
 
 
     # AGREGA LOS ESPACIOS AQUÍ ABAJO PARA QUE QUEDE ASÍ ENTRADA:
-    pygame.display.flip()
+    pygame.display.flip() #Actualiza la pantalla con todo lo dibujado en este frame

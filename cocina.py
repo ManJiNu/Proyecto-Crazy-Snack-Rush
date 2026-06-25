@@ -7,46 +7,82 @@ from Clase_Ingredientes_y_receta import (
     Panes,
     Papa
 )
+
 class Cocina:
-    def __init__(self,tiempoInicial):
+    def __init__(self, tiempoInicial):
         self.tiempo = tiempoInicial
         self.chefs = [] #Guarda a los 2 chefs, empieza vacia
         self.ordenes = []#Recetas generadas para entregar
         self.estaciones = [] #Administrada por cocina
-    
+        self.escenario = "fast_food" #Escenario por defecto
+
+    def configurarEscenario(self, escenario):
+        self.escenario = escenario
+        self.ordenes = [] #Limpia ordenes al cambiar escenario
+        print(f"ESCENARIO CONFIGURADO: {escenario.upper()}")
+
     def generarReceta(self):
         #Lo que procede aqui es importar la clase receta para para trabajar con ellas(esperar recetas del companero al que le tocan)
-        recetasDisponibles = [
-            Receta(
-                "Hamburguesa",
-                [
-                    Proteina("Carne","cocinado"),
-                    Panes("Pan")
-                ]
-            ),
-            Receta(
-                "Papas Fritas",
-                [
-                    Papa()
-                ]
-            ),
-            Receta(
-                "Ensalada",
-                [
-                    FrutasyVegetales("Tomate", "picado"),
-                    FrutasyVegetales("Lechuga", "picado")
-                ]
-            )
-        ]   
+        if self.escenario == "fast_food":
+            recetasDisponibles = [
+                Receta(
+                    "Hamburguesa",
+                    [
+                        Proteina("Carne","cocinado"),
+                        Panes("Pan")
+                    ]
+                ),
+                Receta(
+                    "Papas Fritas",
+                    [
+                        Papa()
+                    ]
+                ),
+                Receta(
+                    "Ensalada",
+                    [
+                        FrutasyVegetales("Tomate", "picado"),
+                        FrutasyVegetales("Lechuga", "picado")
+                    ]
+                )
+            ]
+
+        elif self.escenario == "texas_bbq":
+            recetasDisponibles = [
+                Receta(
+                    "Brisket Plate",
+                    [
+                        Proteina("Brisket", "cocinado"),
+                        FrutasyVegetales("Maiz", "picado")
+                    ]
+                ),
+                Receta(
+                    "BBQ Ribs",
+                    [
+                        Proteina("Costillas", "cocinado"),
+                        Panes("Pan Brioche")
+                    ]
+                ),
+                Receta(
+                    "Brisket Sandwich",
+                    [
+                        Proteina("Brisket", "cocinado"),
+                        Panes("Pan Brioche")
+                    ]
+                )
+            ]
+
+        else:
+            recetasDisponibles = [] #Para futuros escenarios
+
+        if not recetasDisponibles:
+            print("NO HAY RECETAS PARA ESTE ESCENARIO")
+            return None
+
         nuevaReceta = random.choice(recetasDisponibles)
         self.ordenes.append(nuevaReceta)
         print(f"NUEVA ORDEN GENERADA:{nuevaReceta.nombre}") #Nota:Crear objeto Receta real y agregarlo a self.ordenes
         return nuevaReceta
-
-        #Creacion del objeto
-        #nuevaReceta = Receta(recetaSeleccionada)
-        #self.ordenes.append(nuevaReceta)
-        #return nuevaReceta
 
      ####Este bloque me da el temporizador para las recetas, tiempo de ronda en general########
 
@@ -56,6 +92,7 @@ class Cocina:
             self.actualizarTiempoRecetas()#Me reduce el tiempo de las recetas activas
         else:
             print("TIEMPO TERMINADO! GAME OVER") #si el tiempo ya es menor a 0 entonces termina la partida
+
     def actualizarTiempoRecetas(self): #Esto me administra cuanto duran las recetas activdas
         for receta in self.ordenes[:]:
             eliminar = receta.actualizarTiempo(1)
@@ -68,6 +105,7 @@ class Cocina:
             self.chefs.append(ChefObjeto)
         else:
             print("SOLO PUEDEN HABER 2 CHEFS EN LA COCINA")
+
     def agregarEstacion(self,estacionObjeto): #Para estaciones
         self.estaciones.append(estacionObjeto)
 
@@ -81,7 +119,7 @@ class Cocina:
                     f"{receta.puntaje} puntos "
                 )
                 self.ordenes.remove(receta)#Cuando se valida elimina la orden
-                return True 
+                return True
         print("RECETA EQUIVICADA, NO COINCIDE")
         return False #En caso contrario pues no coincide y se alerta al usuario
 
@@ -91,8 +129,13 @@ if __name__ == "__main__":
 
     print(f"Tiempo inicial: {mi_cocina.tiempo}s")
 
+    print("\n--- PROBANDO FAST FOOD ---")
+    mi_cocina.configurarEscenario("fast_food")
     mi_cocina.generarReceta()
 
-    mi_cocina.actualizarTemporizador()
+    print("\n--- PROBANDO TEXAS BBQ ---")
+    mi_cocina.configurarEscenario("texas_bbq")
+    mi_cocina.generarReceta()
+    mi_cocina.generarReceta()
 
-    print(f"Tiempo restante: {mi_cocina.tiempo}s")
+    print(f"\nOrdenes activas: {mi_cocina.ordenes}")

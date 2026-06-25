@@ -6,6 +6,7 @@ from Clase_Estacion_y_Chef import (Chef, TablaDePicar,Sarten,Freidora,Entrega,De
 from Clase_Ingredientes_y_receta import (FrutasyVegetales,Proteina,Papa,Panes)
 from controles import controles #Integro el archivo de Luis de controles 
 from menu import boton
+from Escenario_Vegan import CocinaVegan
 import os #Tuve que meter esta porque no queria encontrar las imagenes
 
 
@@ -174,7 +175,8 @@ img_tabla = pygame.transform.scale(img_tabla, (110, 110))
 
 imagen_cocina_bbq_raw = pygame.image.load("game2.jpeg").convert()
 imagen_cocina_bbq = pygame.transform.scale(imagen_cocina_bbq_raw, (880, 600))
-
+imagen_cocina_vegan = pygame.image.load("game3.png").convert()
+imagen_cocina_vegan = pygame.transform.scale(imagen_cocina_vegan, (880, 600))
 img_sarten = pygame.image.load("Horno.png").convert_alpha()
 img_sarten = pygame.transform.scale(img_sarten, (110, 110))
 
@@ -192,6 +194,24 @@ img_plato = pygame.transform.scale(img_plato, (60, 60))
 
 img_crater_tomate = pygame.image.load("Tomate.png").convert_alpha()
 img_crater_tomate = pygame.transform.scale(img_crater_tomate, (110, 110))
+
+img_lechuga = pygame.image.load("Lechuga.png").convert_alpha()
+img_lechuga = pygame.transform.scale(img_lechuga, (110, 110))
+
+img_aguacate = pygame.image.load("Aguacate.png").convert_alpha()
+img_aguacate = pygame.transform.scale(img_aguacate, (110, 110))
+
+img_mango = pygame.image.load("mango.png").convert_alpha()
+img_mango = pygame.transform.scale(img_mango, (110, 110))
+
+img_banano = pygame.image.load("banana.png").convert_alpha()
+img_banano = pygame.transform.scale(img_banano, (110, 110))
+
+img_fresa = pygame.image.load("fresa.png").convert_alpha()
+img_fresa = pygame.transform.scale(img_fresa, (110, 110))
+
+img_tortilla = pygame.image.load("Tortillas.jpg").convert_alpha()
+img_tortilla = pygame.transform.scale(img_tortilla, (110, 110))
 
 img_crater_carne = pygame.image.load("Carne.png").convert_alpha()
 img_crater_carne = pygame.transform.scale(img_crater_carne, (110, 110))
@@ -282,7 +302,12 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
                     cocina.generarReceta()
                     pantalla_actual = "juego"
                 elif btn_es3.collidepoint(pos_mouse):
-                    pantalla_actual = "juego"
+                     cocina = CocinaVegan(180)    
+                     cocina.agregarChef(chef1)
+                     cocina.agregarChef(chef2)
+                     cocina.generarReceta()
+                     imagen_cocina = imagen_cocina_vegan
+                     pantalla_actual = "juego"
                             
         elif pantalla_actual =="juego":  
             chef_activo = controles(event, chef_activo, cocina.chefs) 
@@ -409,7 +434,7 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
         ventana.blit(txt_es3, rect_txt3)
     #################### Fin###################################3
     elif pantalla_actual == "juego": 
-        cocina.tiempo -= dt #DELTA TIME. Controlo los tiempos
+        cocina.tiempo -= dt  #DELTA TIME. Controlo los tiempos
         if cocina.tiempo <=0:
             pantalla_actual = "game_over"
 
@@ -484,22 +509,35 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
             elif isinstance(est, MesaNormal):
                 sprite_actual = img_mesa
             elif isinstance(est, Despensa):
-                if est.ingrediente_tipo == "Tomate":
-                    sprite_actual = img_crater_tomate
-                elif est.ingrediente_tipo == "Carne":
-                    sprite_actual = img_crater_carne
-                elif est.ingrediente_tipo == "Pan":
-                    sprite_actual = img_crater_pan
-                elif est.ingrediente_tipo == "Papa":
-                    sprite_actual = img_crater_papa
-                elif est.ingrediente_tipo == "Brisket":
-                    sprite_actual = img_brisket
-                elif est.ingrediente_tipo == "Costillas":
-                    sprite_actual = img_costillas
-                elif est.ingrediente_tipo == "Pan Brioche":
-                    sprite_actual = img_pan_brioche
-                elif est.ingrediente_tipo == "Maiz":
-                    sprite_actual = img_maiz
+             nombre_ing = est.ingrediente_tipo if isinstance(est.ingrediente_tipo, str) else est.ingrediente_tipo.nombre
+             if nombre_ing == "Tomate":
+              sprite_actual = img_crater_tomate
+             elif nombre_ing == "Carne":
+              sprite_actual = img_crater_carne
+             elif nombre_ing == "Pan":
+              sprite_actual = img_crater_pan
+             elif nombre_ing == "Papa":
+              sprite_actual = img_crater_papa
+             elif nombre_ing == "Brisket":
+              sprite_actual = img_brisket
+             elif nombre_ing == "Costillas":
+              sprite_actual = img_costillas
+             elif nombre_ing == "Pan Brioche":
+              sprite_actual = img_pan_brioche
+             elif nombre_ing == "Maiz":
+              sprite_actual = img_maiz
+             elif nombre_ing == "Lechuga":
+              sprite_actual = img_lechuga
+             elif nombre_ing == "Aguacate":
+                sprite_actual = img_aguacate
+             elif nombre_ing == "Mango":
+               sprite_actual = img_mango
+             elif nombre_ing == "Fresa":
+               sprite_actual = img_fresa
+             elif nombre_ing == "Banano":
+               sprite_actual = img_banano
+             elif nombre_ing == "Tortilla":
+               sprite_actual = img_tortilla 
             
 
             if sprite_actual:
@@ -508,8 +546,12 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
                 pygame.draw.rect(ventana, (139, 90, 43), (est.posicion_x, est.posicion_y, 110, 110), border_radius=4)
             if isinstance(est, MesaNormal) and est.objeto_encima is not None:
                 ventana.blit(img_plato, (est.posicion_x + 25, est.posicion_y + 15))
-            nombre_letra = fuente_pequeña.render(est.nombre[0] if not isinstance(est, Despensa) else f"D:{est.ingrediente_tipo[0]}", True, (255, 255, 255))
-            ventana.blit(nombre_letra, (est.posicion_x + 5, est.posicion_y - 18))
+            if isinstance(est, Despensa):
+              nombre_ing = est.ingrediente_tipo if isinstance(est.ingrediente_tipo, str) else est.ingrediente_tipo.nombre
+              nombre_letra = fuente_pequeña.render(f"D:{nombre_ing[0]}", True, (255, 255, 255))
+        else:
+              nombre_letra = fuente_pequeña.render(est.nombre[0], True, (255, 255, 255))
+              ventana.blit(nombre_letra, (est.posicion_x + 5, est.posicion_y - 18))
 
                 # Dibujo de los chefs (Naranja para el activo, Azul para el inactivo)
                 # El chef activo es el que responde a los controles WASD

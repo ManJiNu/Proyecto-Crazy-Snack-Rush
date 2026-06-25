@@ -31,22 +31,24 @@ RECETAS_VEGAN = [
 
 #Despensa Escenario Vegan
 DESPENSA_VEGAN= [
-    (FrutasyVegetales("Tomate"),    500, 100),
-    (FrutasyVegetales("Lechuga"),   570, 100),
-    (FrutasyVegetales("Aguacate"),  640, 100),
-    (FrutasyVegetales("Mango"),     500, 180),
-    (FrutasyVegetales("Fresa"),     570, 180),
-    (FrutasyVegetales("Banano"),   640, 180),
-    (Panes("Tortilla"),             500, 260),
-    (Papa(),                        570, 260),
+    (FrutasyVegetales("Tomate"),   480, 50),
+    (FrutasyVegetales("Lechuga"),  600, 50),
+    (FrutasyVegetales("Aguacate"), 720, 50),
+    # Fila del medio (y=170)
+    (FrutasyVegetales("Mango"),    480, 170),
+    (FrutasyVegetales("Fresa"),    600, 170),
+    (FrutasyVegetales("Banano"),   720, 170),
+    # Fila de abajo (y=290)
+    (Panes("Tortilla"),            480, 290),
+    (Papa(),                       600, 290),
 ]
 
 #Cocina
 class CocinaVegan:
     #Atributos
-    def __init__(self, tiempoIni: int=180):
-        self.timepo = tiempoIni
-        self.chef = []
+    def __init__(self, tiempoIni=180):
+        self.tiempo = tiempoIni
+        self.chefs = []
         self.ordenes = []
         self.estaciones = []
         self.inicializarEstaciones()
@@ -69,8 +71,8 @@ class CocinaVegan:
     
     #Chefs
     def agregarChef(self, chef):
-        if len(self.chef) < 2:
-            self.chef.append(chef)
+        if len(self.chefs) < 2:
+            self.chefs.append(chef)
         else:
             print("Solo pueden haber 2 chefs en la cocina")
     

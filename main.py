@@ -339,6 +339,12 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
                                     chef_activo.recoger_ingrediente(Panes("Pan Brioche"))
                                 elif est.ingrediente_tipo == "Maiz":
                                     chef_activo.recoger_ingrediente(FrutasyVegetales("Maiz"))
+                                elif isinstance(est.ingrediente_tipo, FrutasyVegetales):
+                                     chef_activo.recoger_ingrediente(FrutasyVegetales(est.ingrediente_tipo.nombre))
+                                elif isinstance(est.ingrediente_tipo, Panes):
+                                      chef_activo.recoger_ingrediente(Panes(est.ingrediente_tipo.nombre))
+                                elif isinstance(est.ingrediente_tipo, Papa):
+                                       chef_activo.recoger_ingrediente(Papa())
                                 break #Salgo del loop para no revisar mas estaciones
 
                              #SI ES ALGO POR TRANSFORMAR MODIFICO SU ESTADO USANDO LOS METODOS QUE HICE. 

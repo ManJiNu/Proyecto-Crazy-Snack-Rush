@@ -1,6 +1,6 @@
 import random
 from Clase_Ingredientes_y_receta import(Receta, FrutasyVegetales, Panes, Papa)
-from Clase_Estacion_y_Chef import(Estacion,Despensa,TablaDePicar,Freidora, Entrega)
+from Clase_Estacion_y_Chef import(Estacion,Despensa,TablaDePicar,Freidora, Entrega, MesaNormal)
 
 
 #Recetas escenario vegan
@@ -31,16 +31,16 @@ RECETAS_VEGAN = [
 
 #Despensa Escenario Vegan
 DESPENSA_VEGAN= [
-    (FrutasyVegetales("Tomate"),   480, 50),
-    (FrutasyVegetales("Lechuga"),  600, 50),
-    (FrutasyVegetales("Aguacate"), 720, 50),
-    # Fila del medio (y=170)
-    (FrutasyVegetales("Mango"),    480, 170),
-    (FrutasyVegetales("Fresa"),    600, 170),
-    (FrutasyVegetales("Banano"),   720, 170),
-    # Fila de abajo (y=290)
-    (Panes("Tortilla"),            480, 290),
-    (Papa(),                       600, 290),
+ (FrutasyVegetales("Tomate"),   480, 100),
+    (FrutasyVegetales("Lechuga"),  600, 100),
+    (FrutasyVegetales("Aguacate"), 720, 100),
+    
+    (FrutasyVegetales("Mango"),    480, 270),
+    (FrutasyVegetales("Fresa"),    600, 270),
+    (FrutasyVegetales("Banano"),   720,270),
+
+    (Panes("Tortilla"),            480, 390),
+    (Papa(),                       600, 390),
 ]
 
 #Cocina
@@ -55,18 +55,20 @@ class CocinaVegan:
     
     def inicializarEstaciones(self):
         #Estaciones de trabajo
-        self.tabla = TablaDePicar(100,100)
-        self.freidora = Freidora(200,100)
-        self.entrega = Entrega(300,100)
+           self.tabla    = TablaDePicar(70, 170)
+           self.freidora = Freidora(190, 170)
+           self.entrega  = Entrega(310, 170)
+           self.mesa     = MesaNormal(290, 290)
 
-        self.estaciones.extend([
+           self.estaciones.extend([
             self.tabla,
             self.freidora,
             self.entrega,
+            self.mesa,
         ])
 
         #Despensa
-        for ingrediente, x, y in DESPENSA_VEGAN:
+           for ingrediente, x, y in DESPENSA_VEGAN:
             self.estaciones.append(Despensa(x,y,ingrediente))
     
     #Chefs

@@ -1,0 +1,136 @@
+import random
+from Clase_Ingredientes_y_receta import(Receta, FrutasyVegetales, Panes, Papa)
+from Clase_Estacion_y_Chef import(Estacion,Despensa,TablaDePicar,Freidora, Entrega)
+
+
+#Recetas escenario vegan
+def EnsaladaFresca():
+    '''Ensalada fresca: Tomate picado y lechuga picada'''
+    return Receta("Ensalada Fresca", [FrutasyVegetales("Tomate", "picado"), FrutasyVegetales("Lechuga", "picado")])
+
+def WrapVegano():
+    '''Wrap vegano: Tortilla, tomate picado, aguacate picado '''
+    return Receta("Wrap Vegano", [Panes("Tortilla"), FrutasyVegetales("Tomate", "picado"), FrutasyVegetales("Aguacate", "picado")])
+def papaBowl():
+    papa = Papa()
+    papa.estado = "frito"
+    '''Papa bowl: Papa frtia, tomate, lechuga, aguacate'''
+    return Receta("Papa Bowl", [papa,FrutasyVegetales("Tomate", "picado"), FrutasyVegetales("Lechuga", "picado"), FrutasyVegetales("Aguacate", "picado")])
+
+def BowlFrutas():
+    '''Bowl de frutas: Mango, fresa y banano'''
+    return Receta("Bowl de frutras", [   FrutasyVegetales("Mango",   "picado"),FrutasyVegetales("Fresa",   "picado"), FrutasyVegetales("Platano", "picado")])
+
+#Listas de funciones generadoras (cada llamada crea una receta nueva)
+RECETAS_VEGAN = [
+    EnsaladaFresca,
+    WrapVegano,
+    papaBowl,
+    BowlFrutas
+]
+
+#Despensa Escenario Vegan
+DESPENSA_VEGAN= [
+    (FrutasyVegetales("Tomate"),    500, 100),
+    (FrutasyVegetales("Lechuga"),   570, 100),
+    (FrutasyVegetales("Aguacate"),  640, 100),
+    (FrutasyVegetales("Mango"),     500, 180),
+    (FrutasyVegetales("Fresa"),     570, 180),
+    (FrutasyVegetales("Banano"),   640, 180),
+    (Panes("Tortilla"),             500, 260),
+    (Papa(),                        570, 260),
+]
+
+#Cocina
+class CocinaVegan:
+    #Atributos
+    def __init__(self, tiempoIni: int=180):
+        self.timepo = tiempoIni
+        self.chef = []
+        self.ordenes = []
+        self.estaciones = []
+        self.inicializarEstaciones()
+    
+    def inicializarEstaciones(self):
+        #Estaciones de trabajo
+        self.tabla = TablaDePicar(100,100)
+        self.freidora = Freidora(200,100)
+        self.entrega = Entrega(300,100)
+
+        self.estaciones.extend([
+            self.tabla,
+            self.freidora,
+            self.entrega,
+        ])
+
+        #Despensa
+        for ingrediente, x, y in DESPENSA_VEGAN:
+            self.estaciones.append(Despensa(x,y,ingrediente))
+    
+    #Chefs
+    def agregarChef(self, chef):
+        if len(self.chef) < 2:
+            self.chef.append(chef)
+        else:
+            print("Solo pueden haber 2 chefs en la cocina")
+    
+    #Recetas
+    def generarReceta(self):
+        nueva = random.choice(RECETAS_VEGAN)()
+        self.ordenes.append(nueva)
+        print(f"NUEVA ORDEN: {nueva.nombre} "
+              f"({len(nueva.lista_ingredientes)} ingredientes, "
+              f"{nueva.puntaje} pts)")
+        return nueva
+    
+    def entregarReceta(self, chef, ingredientesEntregados):
+        for receta in self.ordenes:
+            if receta.compararReceta(ingredientesEntregados):
+                chef.puntos += receta.puntaje
+                print(f"{chef.nombre} completó '{receta.nombre}' "
+                      f"y obtuvo {receta.puntaje} pts.") 
+                self.ordenes.remove(receta)
+                return True
+        print("Receta incorrecta, no coincide con ninguna orden activa.")
+        return False
+    
+    #Temporizador
+    def actualizarTiempo(self):
+        for receta in self.ordenes[:]:
+            eliminar = receta.actualizarTiempo(1)
+            if eliminar:
+                self.ordenes.remove(receta)
+                print(f"Receta '{receta.nombre}' eliminada. "
+                      f"Penalización: -{receta.puntaje_original} pts.")
+            
+
+##############################
+if __name__ == "__main__":
+    from Clase_Estacion_y_Chef import Chef
+ 
+    cocina = CocinaVegan(180)
+    chef1  = Chef("Chef 1", 100, 300, velocidad=3)
+    cocina.agregarChef(chef1)
+ 
+    print("=== Escenario Vegan ===")
+    print(f"Estaciones: {[e.nombre for e in cocina.estaciones]}")
+    print()
+ 
+    # Generamos 3 recetas aleatorias
+    for _ in range(3):
+        cocina.generarReceta()
+ 
+    print(f"\nÓrdenes activas: {[r.nombre for r in cocina.ordenes]}")
+ 
+    # Simulamos entregar la Ensalada Fresca correctamente
+    tomate  = FrutasyVegetales("Tomate")
+    tomate.preparar()   # crudo -> picado
+ 
+    lechuga = FrutasyVegetales("Lechuga")
+    lechuga.preparar()  # crudo -> picado
+ 
+    print("\n--- Intentando entregar Ensalada Fresca ---")
+    cocina.ordenes.append(EnsaladaFresca())  # nos aseguramos que esté activa
+    resultado = cocina.entregarReceta(chef1, [tomate, lechuga])
+    print("¿Entrega exitosa?", resultado)
+    print("Puntos del chef:", chef1.puntos)

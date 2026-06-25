@@ -23,26 +23,31 @@ class Cocina:
 
     def generarReceta(self):
         #Lo que procede aqui es importar la clase receta para para trabajar con ellas(esperar recetas del companero al que le tocan)
+        #Dependiendo del escenario seleccionado, se cargan recetas diferentes
         if self.escenario == "fast_food":
+
+            #Creo una papa en estado frito para que coincida con la papa que pasa por la freidora
+            papa_frita = Papa()
+            papa_frita.estado = "frito"
+
             recetasDisponibles = [
                 Receta(
                     "Hamburguesa",
                     [
-                        Proteina("Carne","cocinado"),
+                        Proteina("Carne", "cocinado"),
                         Panes("Pan")
                     ]
                 ),
                 Receta(
                     "Papas Fritas",
                     [
-                        Papa()
+                        papa_frita
                     ]
                 ),
                 Receta(
                     "Ensalada",
                     [
-                        FrutasyVegetales("Tomate", "picado"),
-                        FrutasyVegetales("Lechuga", "picado")
+                        FrutasyVegetales("Tomate", "picado")
                     ]
                 )
             ]
@@ -75,51 +80,60 @@ class Cocina:
         else:
             recetasDisponibles = [] #Para futuros escenarios
 
+        #Si no existen recetas para el escenario, no se genera ninguna orden
         if not recetasDisponibles:
             print("NO HAY RECETAS PARA ESTE ESCENARIO")
             return None
 
+        #Selecciona una receta aleatoria de la lista del escenario actual
         nuevaReceta = random.choice(recetasDisponibles)
+
+        #Agrega la receta generada a la lista de ordenes activas
         self.ordenes.append(nuevaReceta)
+
         print(f"NUEVA ORDEN GENERADA:{nuevaReceta.nombre}") #Nota:Crear objeto Receta real y agregarlo a self.ordenes
         return nuevaReceta
 
      ####Este bloque me da el temporizador para las recetas, tiempo de ronda en general########
 
     def actualizarTemporizador(self): #Me dice si la partida termina o no y disminuye el tiempo con cada receta
-        if self.tiempo>0:
-            self.tiempo -=1 #Reduzco el tiempo
+        if self.tiempo > 0:
+            self.tiempo -= 1 #Reduzco el tiempo
             self.actualizarTiempoRecetas()#Me reduce el tiempo de las recetas activas
         else:
             print("TIEMPO TERMINADO! GAME OVER") #si el tiempo ya es menor a 0 entonces termina la partida
 
     def actualizarTiempoRecetas(self): #Esto me administra cuanto duran las recetas activdas
+        #Se recorre una copia de la lista para poder eliminar recetas sin causar errores
         for receta in self.ordenes[:]:
             eliminar = receta.actualizarTiempo(1)
+
             if eliminar:
                 self.ordenes.remove(receta)
                 print("RECETA ELIMINADA.PENALIZACION") #TODOo # Aplicar penalización al jugador
 
     def agregarChef(self, ChefObjeto):#Agrega un chef a la lista
-        if len(self.chefs)<2:
+        if len(self.chefs) < 2:
             self.chefs.append(ChefObjeto)
         else:
             print("SOLO PUEDEN HABER 2 CHEFS EN LA COCINA")
 
-    def agregarEstacion(self,estacionObjeto): #Para estaciones
+    def agregarEstacion(self, estacionObjeto): #Para estaciones
         self.estaciones.append(estacionObjeto)
 
-    def entregarReceta(self,chef,ingredientesEntregados): #En esta seccion quiero comparar la receta actual con la que hizo el jugador.
+    def entregarReceta(self, chef, ingredientesEntregados): #En esta seccion quiero comparar la receta actual con la que hizo el jugador.
         for receta in self.ordenes: #Recorre todas las recetas activas
             if receta.compararReceta(ingredientesEntregados):
-                chef.puntos+= receta.puntaje #Aqui estoy poniendo puntos si lo hicieron bien
+                chef.puntos += receta.puntaje #Aqui estoy poniendo puntos si lo hicieron bien
                 print(
                     f"{chef.nombre} hizo "#Aqui estoy poniendo lo que pasa si tienen bien la receta
                     f"{receta.nombre} y obtuvo "
                     f"{receta.puntaje} puntos "
                 )
+
                 self.ordenes.remove(receta)#Cuando se valida elimina la orden
                 return True
+
         print("RECETA EQUIVICADA, NO COINCIDE")
         return False #En caso contrario pues no coincide y se alerta al usuario
 

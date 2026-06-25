@@ -468,7 +468,29 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
             ventana.blit(fondo_mano, (x_mano - 10, y_mano - 5))
             ventana.blit(sombra_mano, (x_mano + 1, y_mano + 2))
             ventana.blit(ing_texto, (x_mano, y_mano))
+        #Mensaje para mostrar los ingredientes acumulados en el platillo
+        if len(ingredientes_plato) > 0:
+            texto_plato = "Platillo: "
 
+            for ingrediente in ingredientes_plato:
+                texto_plato += f"{ingrediente.nombre} ({ingrediente.estado})  "
+
+            plato_texto = fuente_pequeña.render(texto_plato, True, (255, 255, 255))
+            sombra_plato = fuente_pequeña.render(texto_plato, True, (0, 0, 0))
+
+            x_plato = 20
+            y_plato = ALTO - 70
+
+            fondo_plato = pygame.Surface(
+                (plato_texto.get_width() + 20, plato_texto.get_height() + 12),
+                pygame.SRCALPHA
+            )
+            fondo_plato.fill((0, 0, 0, 180))
+
+            ventana.blit(fondo_plato, (x_plato - 10, y_plato - 5))
+            ventana.blit(sombra_plato, (x_plato + 1, y_plato + 2))
+            ventana.blit(plato_texto, (x_plato, y_plato))
+            
 #IDENTIFICO LA ESTACION PARA ELEGIR LA IMAGEN YA CARGADA
         for est in cocina.estaciones:
             # = pygame.Rect(est.posicion_x, est.posicion_y, 110, 110)

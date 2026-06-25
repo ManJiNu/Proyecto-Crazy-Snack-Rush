@@ -213,6 +213,13 @@ img_pan_brioche = pygame.transform.scale(img_pan_brioche, (110, 110))
 
 img_maiz = pygame.image.load("maiz.png").convert_alpha()
 img_maiz = pygame.transform.scale(img_maiz, (110, 110))
+#Cargo las imagenes de los chefs y las escalo al tamanio del personaje en pantalla
+img_chef1 = pygame.image.load("chef1.png").convert_alpha()
+img_chef1 = pygame.transform.scale(img_chef1, (60, 80))
+
+img_chef2 = pygame.image.load("chef2.png").convert_alpha()
+img_chef2 = pygame.transform.scale(img_chef2, (60, 80))
+
 #-------------CICLO PRINCIPAL DE INTERFAZ---------------------------------------------------------------------------------------------------------
 running = True
 while running: #DELTA TIME, obtengo el tiempo transcurrido
@@ -229,6 +236,18 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if btn_jugar.rect.collidepoint(pos_mouse):
                     pantalla_actual = "seleccion_escenario"
+                elif btn_instrucciones.rect.collidepoint(pos_mouse):
+                    pantalla_actual = "instrucciones"
+                elif btn_creditos.rect.collidepoint(pos_mouse):
+                    pantalla_actual = "creditos"
+        #Evento para volver al menu desde instrucciones con ESC
+        elif pantalla_actual == "instrucciones":
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pantalla_actual = "menu"
+        #Evento para volver al menu desde creditos con ESC
+        elif pantalla_actual == "creditos":
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pantalla_actual = "menu"
         #Eentos click de la seleccion de escenario            
         elif pantalla_actual == "seleccion_escenario":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -495,8 +514,105 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
                 # Dibujo de los chefs (Naranja para el activo, Azul para el inactivo)
                 # El chef activo es el que responde a los controles WASD
         for chef in cocina.chefs:
-            color_c = (255, 100, 0) if chef == chef_activo else (0, 100, 255)
-            pygame.draw.rect(ventana, color_c, (chef.posicion_x, chef.posicion_y, 40, 40), border_radius=4)
+            #Dibujo la imagen del chef segun quien es, no segun quien esta activo
+            if chef == chef1:
+                ventana.blit(img_chef1, (chef.posicion_x, chef.posicion_y))
+            else:
+                ventana.blit(img_chef2, (chef.posicion_x, chef.posicion_y))
+    #############PANTALLA DE INSTRUCCIONES##########
+    elif pantalla_actual == "instrucciones":
+        ventana.fill((15, 15, 20))  #Fondo oscuro igual que seleccion de escenario
+
+        #Titulo
+        fuente_inst = pygame.font.SysFont("Arial", 34, bold=True)
+        fuente_inst_small = pygame.font.SysFont("Arial", 20)
+        fuente_inst_med = pygame.font.SysFont("Arial", 22, bold=True)
+
+        titulo_inst = fuente_inst.render("INSTRUCCIONES", True, (255, 220, 50))
+        ventana.blit(titulo_inst, (ANCHO // 2 - titulo_inst.get_width() // 2, 30))
+
+        #Objetivo del juego
+        obj_titulo = fuente_inst_med.render("OBJETIVO:", True, (255, 150, 50))
+        ventana.blit(obj_titulo, (50, 90))
+        obj_texto = fuente_inst_small.render("Prepara y entrega las recetas antes de que se acabe el tiempo.", True, (220, 220, 220))
+        ventana.blit(obj_texto, (50, 115))
+        obj_texto2 = fuente_inst_small.render("Tienes 180 segundos para acumular la mayor cantidad de puntos posible.", True, (220, 220, 220))
+        ventana.blit(obj_texto2, (50, 138))
+
+        #Controles
+        ctrl_titulo = fuente_inst_med.render("CONTROLES:", True, (255, 150, 50))
+        ventana.blit(ctrl_titulo, (50, 175))
+        controles_lista = [
+            "W / A / S / D  →  Mover al chef activo",
+            "TAB            →  Cambiar entre Chef 1 y Chef 2",
+            "E o ESPACIO    →  Interactuar con estaciones",
+            "ESC            →  Volver al menu"
+        ]
+        for i, linea in enumerate(controles_lista):
+            txt = fuente_inst_small.render(linea, True, (200, 200, 200))
+            ventana.blit(txt, (70, 200 + i * 25))
+
+        #Estaciones
+        est_titulo = fuente_inst_med.render("ESTACIONES:", True, (255, 150, 50))
+        ventana.blit(est_titulo, (50, 310))
+        estaciones_lista = [
+            "Despensa (D)       →  Recoge un ingrediente (manos vacias)",
+            "Tabla de Picar (T) →  Pica frutas y vegetales",
+            "Sarten / Horno (S) →  Cocina proteinas",
+            "Freidora (F)       →  Frie papas",
+            "Mesa (M)           →  Deposita ingredientes temporalmente",
+            "Entrega (E)        →  Entrega la receta acumulada"
+        ]
+        for i, linea in enumerate(estaciones_lista):
+            txt = fuente_inst_small.render(linea, True, (200, 200, 200))
+            ventana.blit(txt, (70, 335 + i * 25))
+
+        #Puntuacion
+        punt_titulo = fuente_inst_med.render("PUNTUACION:", True, (255, 150, 50))
+        ventana.blit(punt_titulo, (50, 500))
+        punt_texto = fuente_inst_small.render("Cada receta vale 10 pts por ingrediente. Si se vence el tiempo, el puntaje se reduce a la mitad.", True, (200, 200, 200))
+        ventana.blit(punt_texto, (70, 525))
+
+        #Instruccion para volver
+        volver_texto = fuente_inst_small.render("Presiona ESC para volver al menu", True, (150, 150, 150))
+        ventana.blit(volver_texto, (ANCHO // 2 - volver_texto.get_width() // 2, 570))
+
+    #############PANTALLA DE CREDITOS##########
+    elif pantalla_actual == "creditos":
+        ventana.fill((15, 15, 20))
+
+        fuente_creditos = pygame.font.SysFont("Arial", 38, bold=True)
+        fuente_creditos_med = pygame.font.SysFont("Arial", 24, bold=True)
+        fuente_creditos_small = pygame.font.SysFont("Arial", 22)
+
+        titulo_creditos = fuente_creditos.render("CRÉDITOS", True, (255, 220, 50))
+        ventana.blit(titulo_creditos, (ANCHO // 2 - titulo_creditos.get_width() // 2, 60))
+
+        proyecto = fuente_creditos_med.render("Crazy Snack Rush TEC", True, (255, 150, 50))
+        ventana.blit(proyecto, (ANCHO // 2 - proyecto.get_width() // 2, 130))
+
+        integrantes_titulo = fuente_creditos_med.render("Desarrollado por:", True, (255, 255, 255))
+        ventana.blit(integrantes_titulo, (ANCHO // 2 - integrantes_titulo.get_width() // 2, 190))
+
+        integrantes = [
+            "Manfred Jiménez",
+            "Amanda Villalobos",
+            "Luis Diego Murillo"
+        ]
+
+        for i, nombre in enumerate(integrantes):
+            texto = fuente_creditos_small.render(nombre, True, (220, 220, 220))
+            ventana.blit(texto, (ANCHO // 2 - texto.get_width() // 2, 230 + i * 35))
+
+        curso = fuente_creditos_small.render("Proyecto de Programación Orientada a Objetos", True, (200, 200, 200))
+        ventana.blit(curso, (ANCHO // 2 - curso.get_width() // 2, 360))
+
+        herramientas = fuente_creditos_small.render("Desarrollado con Python y Pygame", True, (200, 200, 200))
+        ventana.blit(herramientas, (ANCHO // 2 - herramientas.get_width() // 2, 395))
+
+        volver_creditos = fuente_creditos_small.render("Presiona ESC para volver al menu", True, (150, 150, 150))
+        ventana.blit(volver_creditos, (ANCHO // 2 - volver_creditos.get_width() // 2, 540))
+
     elif pantalla_actual == "game_over":
         ventana.fill((50, 50, 50))
         texto_game_over = fuente_titulo.render("GAME OVER", True, (255, 0, 0))

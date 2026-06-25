@@ -110,8 +110,15 @@ class Cocina:
 
             if eliminar:
                 self.ordenes.remove(receta)
-                print("RECETA ELIMINADA.PENALIZACION") #TODOo # Aplicar penalización al jugador
 
+                #Si la receta llega a cero, se descuenta su puntaje original a los chefs
+                for chef in self.chefs:
+                    chef.puntos -= receta.puntaje_original
+
+                    if chef.puntos < 0:
+                        chef.puntos = 0
+
+                print("RECETA ELIMINADA.PENALIZACION") #TODOo # Aplicar penalización al jugador
     def agregarChef(self, ChefObjeto):#Agrega un chef a la lista
         if len(self.chefs) < 2:
             self.chefs.append(ChefObjeto)

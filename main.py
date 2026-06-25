@@ -415,10 +415,9 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
 
 #GENERADOR DE RECETAS CADA 15 MINUTOS##
         ahora = pygame.time.get_ticks() #Tiempo actual en milisegundos
-        if ahora - tiempo_ultima_receta> 15000: #Si pasaron 15 segundos genero nueva receta 
-            if len (cocina.ordenes)<3: #Ella me genera un maximo de 3 recetas por estos minutos 
-                cocina.generarReceta()
-            tiempo_ultima_receta = ahora                       
+        if ahora - tiempo_ultima_receta > 15000: #Si pasaron 15 segundos genero nueva receta 
+            cocina.generarReceta()
+            tiempo_ultima_receta = ahora                     
  #Actualizo lo que duran las recetas, aqui entra en juego la reduccion de puntos 
         for receta in list(cocina.ordenes):
             if receta.actualizarTiempo(dt):
@@ -490,7 +489,6 @@ while running: #DELTA TIME, obtengo el tiempo transcurrido
             ventana.blit(fondo_plato, (x_plato - 10, y_plato - 5))
             ventana.blit(sombra_plato, (x_plato + 1, y_plato + 2))
             ventana.blit(plato_texto, (x_plato, y_plato))
-            
 #IDENTIFICO LA ESTACION PARA ELEGIR LA IMAGEN YA CARGADA
         for est in cocina.estaciones:
             # = pygame.Rect(est.posicion_x, est.posicion_y, 110, 110)
